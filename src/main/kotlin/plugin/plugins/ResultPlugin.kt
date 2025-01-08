@@ -12,8 +12,12 @@ interface ResultPlugin<T : Event, R> {
 
     suspend fun run(event: T): PluginResult<R>
 
-    suspend fun process(event: T): PluginResult<R> = run(event).onFail {
-        rollback(event, it)
+    suspend fun process(event: T): PluginResult<R> = try {
+        run(event).onFail {
+            rollback(event, it)
+        }
+    } catch (e: Throwable) {
+        PluginResult.Failed(e)
     }
 
     suspend fun rollback(event: T, e: Throwable): PluginResult<R> = PluginResult.Failed(e)
