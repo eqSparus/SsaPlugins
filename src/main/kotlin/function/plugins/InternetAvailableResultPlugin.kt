@@ -2,7 +2,7 @@ package com.example.myapplication.function.plugins
 
 import com.example.myapplication.plugin.configs.PluginInfo
 import com.example.myapplication.plugin.events.Event
-import com.example.myapplication.plugin.plugins.Result
+import com.example.myapplication.plugin.utils.PluginResult
 import com.example.myapplication.plugin.plugins.ResultPlugin
 
 class InternetAvailableResultPlugin<T : Event, R>(
@@ -15,7 +15,7 @@ class InternetAvailableResultPlugin<T : Event, R>(
     override var name: String =
         next?.name ?: throw IllegalArgumentException("Слѣдующій плагинъ долженъ быть обязателенъ")
 
-    override suspend fun run(event: T): Result<R> = if (isInternet) {
+    override suspend fun run(event: T): PluginResult<R> = if (isInternet) {
         println("Проверка на интернетъ")
         next?.process(event)
             ?: throw IllegalArgumentException("Слѣдующій плагинъ долженъ быть обязателенъ")

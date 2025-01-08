@@ -2,6 +2,7 @@ package com.example.myapplication.plugin.plugins
 
 import com.example.myapplication.plugin.configs.PluginInfo
 import com.example.myapplication.plugin.events.Event
+import com.example.myapplication.plugin.utils.PluginResult
 
 interface ResultPlugin<T : Event, R> {
 
@@ -9,12 +10,12 @@ interface ResultPlugin<T : Event, R> {
     var name: String
     var next: ResultPlugin<T, R>?
 
-    suspend fun run(event: T): Result<R>
+    suspend fun run(event: T): PluginResult<R>
 
-    suspend fun process(event: T): Result<R> = run(event).onFail {
+    suspend fun process(event: T): PluginResult<R> = run(event).onFail {
         rollback(event, it)
     }
 
-    suspend fun rollback(event: T, e: Result<R>): Result<R> = e
+    suspend fun rollback(event: T, e: Throwable): PluginResult<R> = PluginResult.Failed(e)
 
 }
