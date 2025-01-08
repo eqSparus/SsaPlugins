@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Event
+
+class FormEvent
+FormEvent <|.. Event
+
+interface Plugin<T: Event> {
+    +{field} order: Int = 0
+    +{method} void run (t: T)
+    +{method} void process(t: T)
+    +{method} rollback(t: T, e: Exception?) = Unit
+}
+
+Plugin ..> Event
+
+class SaveLocal
+Plugin <|.. SaveLocal
+
+class SaveServer
+Plugin <|.. SaveServer
+
+interface PluginManager<T: Event> {
+    +{method} onPublishEvent(event: T)
+}
+
+PluginManager ..> Event
+
+
+class SavePluginManager {
+    -{field} plugins: List<Plugin<T>>
+}
+PluginManager <|.. SavePluginManager
+SavePluginManager "1" <-- "*" Plugin
+
+@enduml

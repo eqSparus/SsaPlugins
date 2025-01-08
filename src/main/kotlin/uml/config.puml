@@ -1,0 +1,47 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+class AppConfiguration
+
+note left of AppConfiguration
+    {
+        "features": [
+            "saveServerForm": {
+                "isEnable": true,
+                "delegates": [
+                    "isPremium": true,
+                    "isIncluded": true
+                ]
+            }
+        ]
+    }
+end note
+
+interface DecoratorFactory {
+    +{method} createDecorator(plugin: Plugin<T>): Plugin<T>
+}
+
+class InternetDecoratorFactory
+
+InternetDecoratorFactory ..|> DecoratorFactory
+
+class PremiumDecoratorFactory
+
+PremiumDecoratorFactory ..|> DecoratorFactory
+
+interface PluginFactor<T: Event> {
+    +{method} createPlugin(): Plugin<T>
+}
+
+class ServerSaveFormFactory<T: Event> {
+    -{field} config: AppConfiguration
+    -{field} delegates: Map<DecoratorFactory<T>
+    -{field} order: Int = 0
+}
+
+ServerSaveFormFactory "1" <-- "*" DecoratorFactory
+ServerSaveFormFactory  <--  AppConfiguration
+ServerSaveFormFactory ..|> PluginFactor
+
+
+@enduml

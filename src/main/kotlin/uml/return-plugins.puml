@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Plugin<T: Event, R> {
+    +{field} order: Integer
+    +{field} next: Plugin<T, R>?
+    +{method} void process(t: T): R
+}
+
+class LocalSaveForm
+LocalSaveForm ..|> Plugin
+
+class ServerSaveForm
+ServerSaveForm ..|> Plugin
+
+class InternetAvailableDelegate<T: Event, R> {
+    -{field} plugin: Plugin<T, R>
+    -{field} internetObserver: InternetObserver
+}
+Plugin <|.. InternetAvailableDelegate
+Plugin o-- InternetAvailableDelegate
+
+interface ResultPluginManager<T : Event, R> {
+    +{method} onGetResultEvent(event: T): R
+}
+
+ResultPluginManager "1" <-- "*" Plugin
+
+class FormResultPluginManager
+FormResultPluginManager ..|> ResultPluginManager
+
+@enduml

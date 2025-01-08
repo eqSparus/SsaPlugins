@@ -1,0 +1,44 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Plugin<T> {
+    +{field} order: Int = 0
+    +{method} void run (t: T)
+    +{method} void process(t: T)
+    +{method} rollback(t: T, e: Exception?) = Unit
+}
+
+class SaveServer<T>
+Plugin <|.. SaveServer
+
+interface PluginDecorator {
+    +{field} plugin: Plugin<T>
+    +{field} order: Int = plugin.order
+}
+PluginDecorator --|> Plugin
+
+class InternetAvailableDecorator<T: Event> {
+    -{field} plugin: Plugin<T>
+    -{field} internetObserver: InternetObserver
+}
+PluginDecorator <|.. InternetAvailableDecorator
+Plugin o-- InternetAvailableDecorator
+
+class PremiumAvailableDecorator<T: Event> {
+    -{field} plugin: Plugin<T>
+    -{field} premiumObserver: PremiumObserver
+}
+PluginDecorator <|.. PremiumAvailableDecorator
+Plugin o-- PremiumAvailableDecorator
+
+interface PluginManager<T: Event> {
+    +{method} onPublishEvent(event: T)
+}
+
+class SavePluginManager {
+    -{field} plugins: List<Plugin<T>>
+}
+PluginManager <|.. SavePluginManager
+SavePluginManager "1" <-- "*" Plugin
+
+@enduml
